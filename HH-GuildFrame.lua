@@ -15,10 +15,30 @@ GuildFrame.version = GetAddOnMetadata(addonName, "Version")
 
 local guildPlayersCache = {}
 local guildDataCache = {}
-_G.tmp_guildPlayersCache = guildPlayersCache
-_G.tmp_guildDataCache = guildDataCache
+
 local function IsPlayerInGuild()
     return IsInGuild() and GetGuildInfo("player")
+end
+
+-- Rank > (Class) > Level > Name
+-- Return true for a to be before b
+local function guildPlayerSort(a, b)
+    local dataA = guildDataCache[a]
+    local dataB = guildDataCache[b]
+
+    if dataA.rankIndex == dataB.rankIndex then
+        -- if dataA.class == dataB.class then
+            if dataA.level == dataB.level then
+                return dataA.name < dataB.name
+            else
+                return dataA.level > dataB.level
+            end
+        -- else
+        --     return dataA.class < dataB.class
+        -- end
+    else
+        return dataA.rankIndex < dataB.rankIndex
+    end
 end
 
 local defaults = {
@@ -278,6 +298,8 @@ function GuildFrame:UpdateGuildCache()
             break
         end
     end
+
+    table.sort(guildPlayersCache, guildPlayerSort)
     -- self:DPrint("UpdateGuildCache", #guildPlayersCache, guildDataCache)
 end
 

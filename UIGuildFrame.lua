@@ -111,7 +111,7 @@ local function Update(self, guildPlayers, guildData, raidData)
         local currentRow = self.rows[i]
         -- update row
         if i <= playerCount then
-            currentRow:Update(visibleRows[playerCount - i + 1], raidData)
+            currentRow:Update(visibleRows[i], raidData)
             currentRow:Show()
 
             -- if raidLootData[i].bossKill and (i == 1 or raidLootData[i].bossKill ~= raidLootData[i-1].bossKill) then

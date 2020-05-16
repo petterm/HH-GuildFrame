@@ -20,6 +20,16 @@ Specifically talored for the guild setup used by the Classic guild Held Hostile.
 - Checkboxes in list for prepared invites with button
 - LDB integration
   - Hover guild overview (online)
+- Filter for time-since-online?
+  - Remove old
+  - Show only old?
+- Sorting is fecked
+  - Rank > Class > Level > Name as default?
+  - Special for show-as-main as we sort by the mains instead
+- Default guild tools
+  - Change rank (Cant, its protected..)
+  - Modify note/officer note
+  - Show officer note?
 
 #### UI
 - Filter
