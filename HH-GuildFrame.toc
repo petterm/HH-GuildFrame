@@ -1,0 +1,23 @@
+## Interface: 11304
+## Title: HH Guild Frame
+## Notes: Held Hostile improved guild frame
+## Author: Pox / Meche
+## Version: 1.0.0
+## SavedVariables: HHGuildFrameDB
+## X-Category: Loot
+
+Libs\LibStub\LibStub.lua
+libs\LibDataBroker-1-1\LibDataBroker-1.1.lua
+
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceDB-3.0\AceDB-3.0.xml
+Libs\AceEvent-3.0\AceEvent-3.0.xml
+Libs\AceConsole-3.0\AceConsole-3.0.xml
+Libs\AceGUI-3.0\AceGUI-3.0.xml
+Libs\AceConfig-3.0\AceConfig-3.0.xml
+Libs\AceConfigDialog-3.0\AceConfigDialog-3.0.xml
+
+HH-GuildFrame.lua
+UI.lua
+UIGuildFrame.lua
+UIGuildPlayerRow.lua

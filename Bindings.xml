@@ -1,0 +1,5 @@
+<Bindings>
+ <Binding name="HHGUILDFRAME_TOGGLE" header="HHGUILDFRAME_NAME" default="G" category="ADDONS">
+   HHGuildFrame:Toggle()
+ </Binding>
+</Bindings>
