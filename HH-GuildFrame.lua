@@ -15,30 +15,11 @@ GuildFrame.version = GetAddOnMetadata(addonName, "Version")
 
 local guildPlayersCache = {}
 local guildDataCache = {}
+local raidPlayersCache = {}
+local altNoteWarning = {}
 
 local function IsPlayerInGuild()
     return IsInGuild() and GetGuildInfo("player")
-end
-
--- Rank > (Class) > Level > Name
--- Return true for a to be before b
-local function guildPlayerSort(a, b)
-    local dataA = guildDataCache[a]
-    local dataB = guildDataCache[b]
-
-    if dataA.rankIndex == dataB.rankIndex then
-        -- if dataA.class == dataB.class then
-            if dataA.level == dataB.level then
-                return dataA.name < dataB.name
-            else
-                return dataA.level > dataB.level
-            end
-        -- else
-        --     return dataA.class < dataB.class
-        -- end
-    else
-        return dataA.rankIndex < dataB.rankIndex
-    end
 end
 
 local defaults = {
@@ -116,6 +97,7 @@ AceConfigDialog:AddToBlizOptions(addonName, "HH GuildFrame")
 
 function GuildFrame:OnInitialize()
     self:RegisterEvent("GUILD_ROSTER_UPDATE")
+    self:RegisterEvent("RAID_ROSTER_UPDATE")
 
     self.db = LibStub("AceDB-3.0"):New("HHGuildFrameDB", defaults)
     self.ldb = LibStub("LibDataBroker-1.1"):NewDataObject("HHGuildFrame", {
@@ -142,6 +124,7 @@ end
 
 
 function GuildFrame:Show()
+    GuildRoster()
     self.UI:Show()
     self:UpdateUI() -- Must be after Show
 end
@@ -157,7 +140,8 @@ end
 
 
 function GuildFrame:UpdateUI()
-    self.UI:Update(guildPlayersCache, guildDataCache, {})
+    self:UpdateRaidCache()
+    self.UI:Update(guildPlayersCache, guildDataCache, raidPlayersCache)
 end
 
 
@@ -170,6 +154,12 @@ function GuildFrame:GUILD_ROSTER_UPDATE() --( namespace, event, message, format 
     self:UpdateGuildCache()
     self:UpdateUI()
     self:LDBUpdate()
+end
+
+
+function GuildFrame:RAID_ROSTER_UPDATE()
+    self:UpdateRaidCache()
+    self:UpdateUI()
 end
 
 
@@ -209,7 +199,10 @@ function GuildFrame:GetMainData(altData)
     end
 
     if not altData.note or altData.note == "" then
-        self:Print("Warning: Could not find main for "..altData.name.." (Missing note)")
+        if not altNoteWarning[altData.name] then
+            altNoteWarning[altData.name] = true
+            self:Print("Warning: Could not find main for "..altData.name.." (Missing note)")
+        end
         return altData
     end
 
@@ -218,11 +211,17 @@ function GuildFrame:GetMainData(altData)
         if guildDataCache[main] then
             return guildDataCache[main]
         end
-        self:Print("Warning: Could not find main for "..altData.name.." ("..altData.note..")")
+        if not altNoteWarning[altData.name] then
+            altNoteWarning[altData.name] = true
+            self:Print("Warning: Could not find main for "..altData.name.." ("..altData.note..")")
+        end
         return altData
     end
 
-    self:Print("Warning: Could not find main for "..altData.name.." ("..altData.note..")")
+    if not altNoteWarning[altData.name] then
+        altNoteWarning[altData.name] = true
+        self:Print("Warning: Could not find main for "..altData.name.." ("..altData.note..")")
+    end
     return altData
 end
 
@@ -230,17 +229,35 @@ end
 function GuildFrame:GetMemberCount()
     self:UpdateGuildCache()
     local onlineMembers = 0
-    local onlineOther = 0
+    local onlineInitiates = 0
+    local onlineSocial = 0
     for _, data in pairs(guildDataCache) do
         if data.online then
             if self:IsMemberRank(data.rank) or self:IsMemberAlt(data) then
                 onlineMembers = onlineMembers + 1
+            elseif self:IsInitiateRank(data.rank) then
+                onlineInitiates = onlineInitiates + 1
             else
-                onlineOther = onlineOther + 1
+                onlineSocial = onlineSocial + 1
             end
         end
     end
-    return onlineMembers, onlineOther
+    return onlineMembers, onlineInitiates, onlineSocial
+end
+
+
+function GuildFrame:GetRaidMemberCount()
+    if IsInRaid() then
+        self:UpdateRaidCache()
+        local raidMembers = 0
+        for name in pairs(raidPlayersCache) do
+            if raidPlayersCache[name] then
+                raidMembers = raidMembers + 1
+            end
+        end
+        return raidMembers
+    end
+    return 0
 end
 
 
@@ -276,6 +293,8 @@ function GuildFrame:UpdateGuildCache()
                 guildDataCache[name].online = online
                 guildDataCache[name].status = status
                 guildDataCache[name].class = class
+                guildDataCache[name].isOnAlt = nil
+                guildDataCache[name].isOnAltClass = nil
             else
                 -- if i < 6 then self:DPrint("New data cache for "..name) end
                 guildDataCache[name] = {
@@ -299,8 +318,32 @@ function GuildFrame:UpdateGuildCache()
         end
     end
 
-    table.sort(guildPlayersCache, guildPlayerSort)
     -- self:DPrint("UpdateGuildCache", #guildPlayersCache, guildDataCache)
+end
+
+
+function GuildFrame:UpdateRaidCache()
+    wipe(raidPlayersCache)
+    if IsInRaid() then
+        for i = 1, 40 do
+            local name, _, _, _, class = GetRaidRosterInfo(i);
+            if name then
+                raidPlayersCache[name] = class
+            end
+        end
+    end
+end
+
+
+function GuildFrame:ClearIsOnAlt()
+    for _, data in pairs(guildDataCache) do
+        if data.isOnAlt then
+            data.isOnAlt = nil
+            data.isOnAltClass = nil
+            data.online = false
+        end
+    end
+    self:UpdateUI()
 end
 
 
@@ -316,6 +359,11 @@ end
 
 function GuildFrame:IsAltRank(rank)
     return rank == "Alt" or rank == "Officer alt"
+end
+
+
+function GuildFrame:IsInitiateRank(rank)
+    return rank == "Initiate"
 end
 
 
@@ -366,16 +414,16 @@ end
 
 
 function GuildFrame:LDBText()
-    local onlineMembers, onlineOther = self:GetMemberCount()
+    local onlineMembers, onlineInitiates, onlineSocial = self:GetMemberCount()
 
     if onlineMembers == 0 then
         return "Not in a guild"
     end
 
-    local text = onlineMembers
+    local text = onlineMembers + onlineInitiates
 
-    if onlineOther > 0 then
-        text = text.." |cff888888(+"..onlineOther..")|r"
+    if onlineSocial > 0 then
+        text = text.." |cff888888(+"..onlineSocial..")|r"
     end
 
     return text

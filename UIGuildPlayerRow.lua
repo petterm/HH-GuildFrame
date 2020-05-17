@@ -41,15 +41,23 @@ local function Hide(self, ...)
     self.frame:Hide(...)
 end
 
-local function Update(self, playerData) --, raidData)
+local function Update(self, playerData, raidData)
     if playerData.online then
         local classColor = "ffaaaaaa" --n!!
         if playerData.class then
             classColor = RAID_CLASS_COLORS[playerData.class].colorStr
         end
 
-        -- -- self.frame.name:SetText("|c"..classColor..playerData.name.."|r")
-        self.frame.name:SetText(playerData.name)
+        local name = playerData.name
+        local altName = ""
+        if raidData[name] then
+            name = "|cfffa842f"..name.."|r"
+        end
+        if playerData.isOnAlt then
+            altName = " |c"..classColorDark[playerData.isOnAltClass]..playerData.isOnAlt.."|r"
+        end
+
+        self.frame.name:SetText(name..altName)
         self.frame.class:SetText("|c"..classColor..playerData.className.."|r")
         self.frame.level:SetText(playerData.level)
         self.frame.zone:SetText(playerData.zone)

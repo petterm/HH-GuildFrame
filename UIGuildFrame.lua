@@ -3,65 +3,22 @@ local _, GuildFrame = ...
 local ROW_HEIGHT = 20
 
 
-local function FilterOffline()
-    local dbUI = GuildFrame:GetUIDB()
-    dbUI.showOffline = not dbUI.showOffline
-    SetGuildRosterShowOffline(dbUI.showOffline)
-    GuildFrame:UpdateUI()
-end
-
-
-local function FilterMember()
-    local dbUI = GuildFrame:GetUIDB()
-    dbUI.showMembers = not dbUI.showMembers
-    GuildFrame:UpdateUI()
-end
-
-
-local function FilterInitiate()
-    local dbUI = GuildFrame:GetUIDB()
-    dbUI.showInitiates = not dbUI.showInitiates
-    GuildFrame:UpdateUI()
-end
-
-
-local function FilterAlt()
-    local dbUI = GuildFrame:GetUIDB()
-    dbUI.showAlts = not dbUI.showAlts
-    GuildFrame:UpdateUI()
-end
-
-
-local function FilterSocial()
-    local dbUI = GuildFrame:GetUIDB()
-    dbUI.showSocial = not dbUI.showSocial
-    GuildFrame:UpdateUI()
-end
-
-
-local function FilterNotInRaid()
-    local dbUI = GuildFrame:GetUIDB()
-    dbUI.hideNotInRaid = not dbUI.hideNotInRaid
-    GuildFrame:UpdateUI()
-end
-
-
-local function FilterShowAsMain()
-    local dbUI = GuildFrame:GetUIDB()
-    dbUI.showAsMains = not dbUI.showAsMains
-    GuildFrame:UpdateUI()
-end
-
-
-local function UpdateMenu(self)
-    local dbUI = GuildFrame:GetUIDB()
-    self.member:SetChecked(dbUI.showMembers)
-    self.initiate:SetChecked(dbUI.showInitiates)
-    self.alt:SetChecked(dbUI.showAlts)
-    self.social:SetChecked(dbUI.showSocial)
-    self.raid:SetChecked(dbUI.hideNotInRaid)
-    self.mains:SetChecked(dbUI.showAsMains)
-    self.offline:SetChecked(dbUI.showOffline)
+-- Rank > (Class) > Level > Name
+-- Return true for a to be before b
+local function guildPlayerSort(dataA, dataB)
+    if dataA.rankIndex == dataB.rankIndex then
+        -- if dataA.class == dataB.class then
+            if dataA.level == dataB.level then
+                return dataA.name < dataB.name
+            else
+                return dataA.level > dataB.level
+            end
+        -- else
+        --     return dataA.class < dataB.class
+        -- end
+    else
+        return dataA.rankIndex < dataB.rankIndex
+    end
 end
 
 
@@ -81,8 +38,10 @@ local function Update(self, guildPlayers, guildData, raidData)
         local memberCheck = dbUI.showMembers or not GuildFrame:IsMemberRank(mainData.rank)
         local initiateCheck = dbUI.showInitiates or mainData.rank ~= "Initiate"
         local socialCheck = dbUI.showSocial or mainData.rank ~= "Social"
+        local raidCheck = not (IsInRaid() and dbUI.hideNotInRaid and
+            (raidData[data.name] or raidData[mainData.name]))
 
-        if memberCheck and altCheck and initiateCheck and socialCheck and offlineCheck then
+        if memberCheck and altCheck and initiateCheck and socialCheck and offlineCheck and raidCheck then
             tinsert(visibleRows, data)
         end
     end
@@ -98,21 +57,40 @@ local function Update(self, guildPlayers, guildData, raidData)
             self.rows[currentRow]:SetParent(self.scrollChild)
 
             if currentRow == 1 then
-                self.rows[currentRow]:SetPoint("TOPLEFT", self.scrollChild, "TOPLEFT", 5, -5)
+                self.rows[currentRow]:SetPoint("TOPLEFT", self.scrollChild, "TOPLEFT", 5, 0)
             else
                 self.rows[currentRow]:SetPoint("TOPLEFT", self.rows[currentRow - 1].frame, "BOTTOMLEFT", 0, 0)
             end
         end
     end
 
+    if dbUI.showAsMains then
+        for i = 1, #visibleRows do
+            if GuildFrame:IsAltRank(visibleRows[i].rank) then
+                local mainData = GuildFrame:GetMainData(visibleRows[i])
+                -- Multiboxers..
+                if not mainData.online then
+                    local alt = visibleRows[i].name
+                    visibleRows[i] = mainData
+                    visibleRows[i].isOnAlt = alt
+                    visibleRows[i].isOnAltClass = guildData[alt].class
+                    visibleRows[i].online = true
+                end
+            end
+        end
+    end
+
+    table.sort(visibleRows, guildPlayerSort)
+
     -- For loot in db
-    local height = 15
+    local height = 10
     for i = 1, #self.rows do
         local currentRow = self.rows[i]
         -- update row
         if i <= playerCount then
             currentRow:Update(visibleRows[i], raidData)
             currentRow:Show()
+            height = height + ROW_HEIGHT
 
             -- if raidLootData[i].bossKill and (i == 1 or raidLootData[i].bossKill ~= raidLootData[i-1].bossKill) then
             --     height = height + ROW_HEIGHT + 15
@@ -129,97 +107,6 @@ local function Update(self, guildPlayers, guildData, raidData)
         end
     end
     self.scrollChild:SetHeight(math.max(height, self:GetHeight()))
-end
-
-
-function GuildFrame.UI.CreateGuildMenu()
-    local frameName = "HHGuildFrame_UI-GuildFrame-Menu"
-
-    local frame = CreateFrame("Frame", frameName)
-    frame:ClearAllPoints()
-    frame:SetHeight(20)
-    frame.Update = UpdateMenu
-
-    frame.offline = CreateFrame("CheckButton", frameName.."_Offline", frame, "ChatConfigBaseCheckButtonTemplate")
-    frame.offline:SetHeight(24)
-    frame.offline:SetWidth(24)
-    frame.offline:SetHitRectInsets(0, -50, 0, 0)
-    frame.offline:SetPoint("TOPLEFT", frame, "TOPLEFT", 2, 1)
-    frame.offline:SetScript("OnClick", FilterOffline)
-    frame.offline.text = frame.offline:CreateFontString(frameName.."_OfflineText", "ARTWORK", "GameFontNormalSmall")
-    frame.offline.text:SetPoint("LEFT", frame.offline, "RIGHT", 0, 0)
-    frame.offline.text:SetJustifyH("LEFT")
-    frame.offline.text:SetText("Offline")
-
-    frame.member = CreateFrame("CheckButton", frameName.."_Member", frame, "ChatConfigBaseCheckButtonTemplate")
-    frame.member:SetHeight(24)
-    frame.member:SetWidth(24)
-    frame.member:SetHitRectInsets(0, -50, 0, 0)
-    frame.member:SetPoint("LEFT", frame.offline, "RIGHT", 50, 0)
-    frame.member:SetScript("OnClick", FilterMember)
-    frame.member.text = frame.member:CreateFontString(frameName.."_MemberText", "ARTWORK", "GameFontNormalSmall")
-    frame.member.text:SetPoint("LEFT", frame.member, "RIGHT", 0, 0)
-    frame.member.text:SetJustifyH("LEFT")
-    frame.member.text:SetText("Member")
-
-    frame.initiate = CreateFrame("CheckButton", frameName.."_Initiate", frame, "ChatConfigBaseCheckButtonTemplate")
-    frame.initiate:SetHeight(24)
-    frame.initiate:SetWidth(24)
-    frame.initiate:SetHitRectInsets(0, -40, 0, 0)
-    frame.initiate:SetPoint("LEFT", frame.member, "RIGHT", 50, 0)
-    frame.initiate:SetScript("OnClick", FilterInitiate)
-    frame.initiate.text = frame.initiate:CreateFontString(frameName.."_InitiateText", "ARTWORK", "GameFontNormalSmall")
-    frame.initiate.text:SetPoint("LEFT", frame.initiate, "RIGHT", 0, 0)
-    frame.initiate.text:SetJustifyH("LEFT")
-    frame.initiate.text:SetText("Initiate")
-
-    frame.social = CreateFrame("CheckButton", frameName.."_Social", frame, "ChatConfigBaseCheckButtonTemplate")
-    frame.social:SetHeight(24)
-    frame.social:SetWidth(24)
-    frame.social:SetHitRectInsets(0, -35, 0, 0)
-    frame.social:SetPoint("LEFT", frame.initiate, "RIGHT", 42, 0)
-    frame.social:SetScript("OnClick", FilterSocial)
-    frame.social.text = frame.social:CreateFontString(frameName.."_SocialText", "ARTWORK", "GameFontNormalSmall")
-    frame.social.text:SetPoint("LEFT", frame.social, "RIGHT", 0, 0)
-    frame.social.text:SetJustifyH("LEFT")
-    frame.social.text:SetText("Social")
-
-    frame.alt = CreateFrame("CheckButton", frameName.."_Alt", frame, "ChatConfigBaseCheckButtonTemplate")
-    frame.alt:SetHeight(24)
-    frame.alt:SetWidth(24)
-    frame.alt:SetHitRectInsets(0, -20, 0, 0)
-    frame.alt:SetPoint("LEFT", frame.social, "RIGHT", 40, 0)
-    frame.alt:SetScript("OnClick", FilterAlt)
-    frame.alt.text = frame.alt:CreateFontString(frameName.."_AltText", "ARTWORK", "GameFontNormalSmall")
-    frame.alt.text:SetPoint("LEFT", frame.alt, "RIGHT", 0, 0)
-    frame.alt.text:SetJustifyH("LEFT")
-    frame.alt.text:SetText("Alt")
-
-    frame.raid = CreateFrame("CheckButton", frameName.."_Raid", frame, "ChatConfigBaseCheckButtonTemplate")
-    frame.raid:SetHeight(24)
-    frame.raid:SetWidth(24)
-    frame.raid:SetHitRectInsets(0, -60, 0, 0)
-    frame.raid:SetPoint("LEFT", frame.alt, "RIGHT", 25, 0)
-    frame.raid:SetScript("OnClick", FilterNotInRaid)
-    frame.raid.text = frame.raid:CreateFontString(frameName.."_RaidText", "ARTWORK", "GameFontNormalSmall")
-    frame.raid.text:SetPoint("LEFT", frame.raid, "RIGHT", 0, 0)
-    frame.raid.text:SetJustifyH("LEFT")
-    frame.raid.text:SetText("|cff777777Not in raid|r")
-    frame.raid:SetEnabled(false)
-
-    frame.mains = CreateFrame("CheckButton", frameName.."_Mains", frame, "ChatConfigBaseCheckButtonTemplate")
-    frame.mains:SetHeight(24)
-    frame.mains:SetWidth(24)
-    frame.mains:SetHitRectInsets(0, -75, 0, 0)
-    frame.mains:SetPoint("LEFT", frame.raid, "RIGHT", 65, 0)
-    frame.mains:SetScript("OnClick", FilterShowAsMain)
-    frame.mains.text = frame.mains:CreateFontString(frameName.."_MainsText", "ARTWORK", "GameFontNormalSmall")
-    frame.mains.text:SetPoint("LEFT", frame.mains, "RIGHT", 0, 0)
-    frame.mains.text:SetJustifyH("LEFT")
-    frame.mains.text:SetText("|cff777777Show as main|r")
-    frame.mains:SetEnabled(false)
-
-    return frame
 end
 
 

@@ -21,6 +21,7 @@ function GuildFrame.UI:Update(guildPlayers, guildData, raidData)
         return
     end
     self.frame.guildMenu:Update()
+    self.frame.guildInfo:Update()
     self.frame.guildFrame:Update(guildPlayers, guildData, raidData)
 end
 
@@ -34,7 +35,7 @@ function GuildFrame.UI:Create()
     local frame = CreateFrame("Frame", frameName)
     frame:SetParent(UIParent)
     frame:SetPoint("CENTER")
-    frame:SetHeight(543)
+    frame:SetHeight(568)
     frame:SetWidth(540)
     frame:SetMovable(true)
     frame:EnableMouse(true)
@@ -56,8 +57,6 @@ function GuildFrame.UI:Create()
     frame.titleFrame:SetParent(frame)
     frame.titleFrame:SetPoint("TOPLEFT", frame, 10, -7)
     frame.titleFrame:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -30, -25)
-    frame.titleFrame:SetBackdrop({ bgFile = "Interface/Tooltips/UI-Tooltip-Background" })
-    frame.titleFrame:SetBackdropColor(0.2,0.2,0.2,1)
 
     frame.titleFrame.text = frame.titleFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
     frame.titleFrame.text:SetAllPoints(frame.titleFrame)
@@ -78,13 +77,17 @@ function GuildFrame.UI:Create()
     frame.guildMenu:SetParent(frame)
     frame.guildMenu:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -28)
     frame.guildMenu:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -10, -48)
-    -- frame.guildMenu:SetBackdrop({ bgFile = "Interface/Tooltips/UI-Tooltip-Background" })
-    -- frame.guildMenu:SetBackdropColor(0.2,0.2,0.2,1)
+
+    frame.guildInfo = GuildFrame.UI.CreateGuildInfo()
+    frame.guildInfo:ClearAllPoints()
+    frame.guildInfo:SetParent(frame)
+    frame.guildInfo:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 10, 10)
+    frame.guildInfo:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -10, 10)
 
     frame.guildFrame = GuildFrame.UI.CreateGuildFrame()
     frame.guildFrame:ClearAllPoints()
     frame.guildFrame:SetParent(frame)
-    frame.guildFrame:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 10, 10)
+    frame.guildFrame:SetPoint("BOTTOMLEFT", frame.guildInfo, "TOPLEFT", 0, 5)
 
     self.frame = frame
 

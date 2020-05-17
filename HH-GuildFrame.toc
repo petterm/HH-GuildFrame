@@ -20,4 +20,6 @@ Libs\AceConfigDialog-3.0\AceConfigDialog-3.0.xml
 HH-GuildFrame.lua
 UI.lua
 UIGuildFrame.lua
+UIGuildMenu.lua
+UIGuildInfo.lua
 UIGuildPlayerRow.lua

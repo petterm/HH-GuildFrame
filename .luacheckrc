@@ -9,6 +9,8 @@ new_read_globals = {
     "IsInGuild",
     "GetGuildInfo",
     "FriendsFrame_ShowDropdown",
+    "IsInRaid",
+    "strjoin",
 
     "CombatLogGetCurrentEventInfo",
     "CreateFrame",
