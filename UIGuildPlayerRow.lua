@@ -73,7 +73,7 @@ local function BlizzGuildStatus_Update()
         -- Manage guild member related buttons
         if ( CanGuildPromote() and ( rankIndex > 1 ) and ( rankIndex > (guildRankIndex + 1) ) ) then
             GuildFramePromoteButton:Enable();
-        else 
+        else
             GuildFramePromoteButton:Disable();
         end
         if ( CanGuildDemote() and ( rankIndex >= 1 ) and ( rankIndex > guildRankIndex ) and

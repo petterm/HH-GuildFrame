@@ -2,7 +2,7 @@
 ## Title: HH Guild Frame
 ## Notes: Held Hostile improved guild frame
 ## Author: Pox / Meche
-## Version: 1.0.0
+## Version: 1.1.0
 ## SavedVariables: HHGuildFrameDB
 ## X-Category: Loot
 
