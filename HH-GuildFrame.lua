@@ -10,6 +10,7 @@ GuildFrame = LibStub("AceAddon-3.0"):NewAddon(
 _G.HHGuildFrame = GuildFrame
 _G["BINDING_HEADER_HHGUILDFRAME_NAME"] = "HH Guild Frame"
 _G["BINDING_NAME_HHGUILDFRAME_TOGGLE"] = "Toggle guild frame"
+local BlizzGuildFrame = _G.GuildFrame
 
 GuildFrame.version = GetAddOnMetadata(addonName, "Version")
 
@@ -113,6 +114,11 @@ function GuildFrame:OnInitialize()
             end
         end,
     })
+
+    -- Return the details frame if we stole it
+    BlizzGuildFrame:HookScript("OnShow", function()
+        GuildFrame.UI:ReturnGuildMemberDetailFrame()
+    end)
 end
 
 
@@ -251,7 +257,7 @@ function GuildFrame:GetRaidMemberCount()
         self:UpdateRaidCache()
         local raidMembers = 0
         for name in pairs(raidPlayersCache) do
-            if raidPlayersCache[name] then
+            if guildDataCache[name] and guildDataCache[name].online then
                 raidMembers = raidMembers + 1
             end
         end
@@ -281,6 +287,7 @@ function GuildFrame:UpdateGuildCache()
             -- Dont create new tables
             if guildDataCache[name] then
                 -- if i < 6 then self:DPrint("Update data cache for "..name) end
+                guildDataCache[name].guildIndex = i
                 guildDataCache[name].name = name
                 guildDataCache[name].nameRaw = nameRaw
                 guildDataCache[name].rank = rank
@@ -298,6 +305,7 @@ function GuildFrame:UpdateGuildCache()
             else
                 -- if i < 6 then self:DPrint("New data cache for "..name) end
                 guildDataCache[name] = {
+                    guildIndex = i,
                     name = name,
                     nameRaw = nameRaw,
                     rank = rank,

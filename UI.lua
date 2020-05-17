@@ -1,4 +1,5 @@
 local _, GuildFrame = ...
+local BlizzGuildFrame = _G.GuildFrame
 
 GuildFrame.UI = {}
 local UI_CREATED = false
@@ -13,6 +14,11 @@ end
 
 local function FrameOnDragStop(self)
     self:StopMovingOrSizing()
+end
+
+
+local function OnHide()
+    GuildFrame.UI:ReturnGuildMemberDetailFrame()
 end
 
 
@@ -42,6 +48,7 @@ function GuildFrame.UI:Create()
     frame:RegisterForDrag("LeftButton", "RightButton")
     frame:SetScript("OnMouseDown", FrameOnDragStart)
     frame:SetScript("OnMouseUp", FrameOnDragStop)
+    frame:SetScript("OnHide", OnHide)
     frame:SetToplevel(true)
     frame:SetClampedToScreen(true)
     frame:SetBackdrop({ bgFile = "Interface/Tooltips/UI-Tooltip-Background" })
@@ -100,3 +107,23 @@ function GuildFrame.UI:Show()
     self.frame:Show()
 end
 
+
+local FRAME_STOLEN = false
+function GuildFrame.UI:StealGuildMemberDetailFrame()
+    if not FRAME_STOLEN then
+        FRAME_STOLEN = true
+        GuildMemberDetailFrame:SetPoint("TOPLEFT", GuildFrame.UI.frame, "TOPRIGHT", 1, 0)
+        GuildMemberDetailFrame:SetParent(GuildFrame.UI.frame)
+    end
+end
+
+
+function GuildFrame.UI:ReturnGuildMemberDetailFrame()
+    if FRAME_STOLEN then
+        FRAME_STOLEN = false
+        GuildMemberDetailFrame:SetPoint("TOPLEFT", BlizzGuildFrame, "TOPRIGHT", 1, 0)
+        GuildMemberDetailFrame:SetParent(FriendsFrame)
+        BlizzGuildFrame.selectedGuildMember = 0;
+        SetGuildRosterSelection(0);
+    end
+end
