@@ -64,6 +64,8 @@ function GuildFrame.UI:Create()
     frame.titleFrame:SetParent(frame)
     frame.titleFrame:SetPoint("TOPLEFT", frame, 10, -7)
     frame.titleFrame:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -30, -25)
+    frame.titleFrame:SetBackdrop({ bgFile = "Interface/Tooltips/UI-Tooltip-Background" })
+    frame.titleFrame:SetBackdropColor(0.2,0.2,0.2,1)
 
     frame.titleFrame.text = frame.titleFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
     frame.titleFrame.text:SetAllPoints(frame.titleFrame)

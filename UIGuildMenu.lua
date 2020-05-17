@@ -73,8 +73,6 @@ function GuildFrame.UI.CreateGuildMenu()
     local frame = CreateFrame("Frame", frameName)
     frame:ClearAllPoints()
     frame:SetHeight(20)
-    frame:SetBackdrop({ bgFile = "Interface/Tooltips/UI-Tooltip-Background" })
-    frame:SetBackdropColor(0.2,0.2,0.2,1)
     frame.Update = Update
 
     frame.offline = CreateFrame("CheckButton", frameName.."_Offline", frame, "ChatConfigBaseCheckButtonTemplate")
