@@ -321,7 +321,7 @@ function GuildFrame:UpdateGuildCache()
                 }
             end
         else
-            self:Dprint("GetGuildRosterInfo returned nil as first parameter")
+            self:DPrint("GetGuildRosterInfo returned nil as first parameter")
             break
         end
     end
