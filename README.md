@@ -2,7 +2,7 @@
 
 A World of Warcraft Classic addon that adds an improved guild frame for managing players in the guild.
 
-Specifically talored for the guild setup used by the Classic guild Held Hostile.
+Specifically tailored for the guild setup used by the Classic guild Held Hostile.
 
 ### Features
 - Larger guild window for easy overview
@@ -42,10 +42,12 @@ Showing the main characters for players that are online, even if they are curren
 - Sorting
   - Rank > Class > Level > Name as default?
   - Special for show-as-main as we sort by the mains instead?
-- Default guild tools
-  - Change rank (Cant, its protected..?)
-  - Modify note/officer note
-  - Show officer note?
+- Better configuration
+  - Modifiable pattern used to extract main name from alt note
+  - Way to mark available ranks
+    - Select member ranks
+    - Select alt ranks
+  - Change Social to Other to support multiple ranks that are not Main/Initiate/Alt
 
 #### UI
 - Filter

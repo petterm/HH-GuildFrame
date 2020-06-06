@@ -198,7 +198,7 @@ local function Update(self, playerData, raidData)
     self.guildIndex = playerData.guildIndex
     self.name = playerData.name
     self.frame.rank:SetText(playerData.rank)
-    if playerData.rank == "Alt" or playerData.rank == "Officer Alt" then
+    if GuildFrame:IsAltRank(playerData.rank) then
         self.frame.main:SetText(GuildFrame:GetMainName(playerData.note) or "-")
     else
         self.frame.main:SetText("-")
