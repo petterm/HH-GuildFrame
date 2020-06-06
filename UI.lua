@@ -19,6 +19,7 @@ end
 
 local function OnHide()
     GuildFrame.UI:ReturnGuildMemberDetailFrame()
+    GuildFrame:CancelTimer(GuildFrame.guildUpdateTimer)
 end
 
 

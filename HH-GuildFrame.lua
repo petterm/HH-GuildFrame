@@ -133,6 +133,9 @@ function GuildFrame:Show()
     GuildRoster()
     self.UI:Show()
     self:UpdateUI() -- Must be after Show
+    self.guildUpdateTimer = self:ScheduleRepeatingTimer(function()
+        GuildRoster()
+    end, 11)
 end
 
 
