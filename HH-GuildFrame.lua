@@ -26,6 +26,7 @@ end
 local defaults = {
     profile = {
         debugPrint = false,
+        showZoneColors = true,
         ui = {
             showOffline = false,
             showMembers = true,
@@ -34,6 +35,8 @@ local defaults = {
             showSocial = true,
             hideNotInRaid = false,
             showAsMains = false,
+            showInactive = true,
+            inactiveDaysLimit = 30,
         },
     },
     realm = {},
@@ -57,9 +60,10 @@ local optionsTable = {
             order = 2,
             args = {
                 show = {
-                    type = "execute",
-                    name = "Show main UI",
-                    func = function() GuildFrame:Show() end,
+                    type = "toggle",
+                    name = "Show zone colors",
+                    get = function() return GuildFrame.db.profile.showZoneColors end,
+                    set = function(_, v) GuildFrame.db.profile.showZoneColors = v end,
                     order = 1,
                     width = "full",
                 },
@@ -297,7 +301,7 @@ function GuildFrame:UpdateGuildCache()
                 guildDataCache[name].rankIndex = rankIndex
                 guildDataCache[name].level = level
                 guildDataCache[name].className = className
-                guildDataCache[name].zone = zone
+                guildDataCache[name].zone = zone or ""
                 guildDataCache[name].note = note
                 guildDataCache[name].officernote = officernote
                 guildDataCache[name].online = online
@@ -315,7 +319,7 @@ function GuildFrame:UpdateGuildCache()
                     rankIndex = rankIndex,
                     level = level,
                     className = className,
-                    zone = zone,
+                    zone = zone or "",
                     note = note,
                     officernote = officernote,
                     online = online,

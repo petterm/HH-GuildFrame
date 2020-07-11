@@ -180,7 +180,12 @@ local function Update(self, playerData, raidData)
         self.frame.name:SetText(name..altName)
         self.frame.class:SetText("|c"..classColor..playerData.className.."|r")
         self.frame.level:SetText(playerData.level)
-        self.frame.zone:SetText(playerData.zone)
+        if GuildFrame.db.profile.showZoneColors then
+            local zoneColor = GuildFrame.zoneColor[playerData.zone] or "b0b0b0"
+            self.frame.zone:SetText("|cff"..zoneColor..playerData.zone.."|r")
+        else
+            self.frame.zone:SetText(playerData.zone)
+        end
     else
         local offlineColor = "ff808080"
         local classColor = offlineColor

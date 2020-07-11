@@ -9,37 +9,16 @@ local function FilterOffline()
 end
 
 
-local function FilterMember()
-    local dbUI = GuildFrame:GetUIDB()
-    dbUI.showMembers = not dbUI.showMembers
-    GuildFrame:UpdateUI()
-end
-
-
-local function FilterInitiate()
-    local dbUI = GuildFrame:GetUIDB()
-    dbUI.showInitiates = not dbUI.showInitiates
-    GuildFrame:UpdateUI()
-end
-
-
-local function FilterAlt()
-    local dbUI = GuildFrame:GetUIDB()
-    dbUI.showAlts = not dbUI.showAlts
-    GuildFrame:UpdateUI()
-end
-
-
-local function FilterSocial()
-    local dbUI = GuildFrame:GetUIDB()
-    dbUI.showSocial = not dbUI.showSocial
-    GuildFrame:UpdateUI()
-end
-
-
 local function FilterNotInRaid()
     local dbUI = GuildFrame:GetUIDB()
     dbUI.hideNotInRaid = not dbUI.hideNotInRaid
+    GuildFrame:UpdateUI()
+end
+
+
+local function FilterInactive()
+    local dbUI = GuildFrame:GetUIDB()
+    dbUI.showInactive = not dbUI.showInactive
     GuildFrame:UpdateUI()
 end
 
@@ -55,15 +34,73 @@ local function FilterShowAsMain()
 end
 
 
+local function RoleFilterTitle()
+    local dbUI = GuildFrame:GetUIDB()
+    local count = 0
+    if dbUI.showMembers then
+        count = count + 1
+    end
+    if dbUI.showInitiates then
+        count = count + 1
+    end
+    if dbUI.showSocials then
+        count = count + 1
+    end
+    if dbUI.showAlts then
+        count = count + 1
+    end
+
+    if count == 4 then
+        return "Roles: All"
+    end
+    return "Roles: "..count.."/4"
+end
+
+
 local function Update(self)
     local dbUI = GuildFrame:GetUIDB()
-    self.member:SetChecked(dbUI.showMembers)
-    self.initiate:SetChecked(dbUI.showInitiates)
-    self.alt:SetChecked(dbUI.showAlts)
-    self.social:SetChecked(dbUI.showSocial)
     self.raid:SetChecked(dbUI.hideNotInRaid)
     self.mains:SetChecked(dbUI.showAsMains)
     self.offline:SetChecked(dbUI.showOffline)
+    self.inactive:SetChecked(dbUI.showInactive)
+    RoleFilterTitle()
+end
+
+
+local function RoleFilterDropDownSelect(_, arg1)
+    local dbUI = GuildFrame:GetUIDB()
+    dbUI[arg1] = not dbUI[arg1]
+    UIDropDownMenu_SetText(GuildFrame.UI.frame.guildMenu.roleFilter, RoleFilterTitle())
+    GuildFrame:UpdateUI()
+end
+
+
+local function RoleFilterDropDownMenu()
+    local info = UIDropDownMenu_CreateInfo()
+    local dbUI = GuildFrame:GetUIDB()
+    info.func = RoleFilterDropDownSelect
+    info.keepShownOnClick = true
+    info.isNotRadio = true
+
+    info.text = "Member"
+    info.arg1 = "showMembers"
+    info.checked = dbUI[info.arg1]
+    UIDropDownMenu_AddButton(info)
+
+    info.text = "Initiate"
+    info.arg1 = "showInitiates"
+    info.checked = dbUI[info.arg1]
+    UIDropDownMenu_AddButton(info)
+
+    info.text = "Social"
+    info.arg1 = "showSocials"
+    info.checked = dbUI[info.arg1]
+    UIDropDownMenu_AddButton(info)
+
+    info.text = "Alt"
+    info.arg1 = "showAlts"
+    info.checked = dbUI[info.arg1]
+    UIDropDownMenu_AddButton(info)
 end
 
 
@@ -72,69 +109,32 @@ function GuildFrame.UI.CreateGuildMenu()
 
     local frame = CreateFrame("Frame", frameName)
     frame:ClearAllPoints()
-    frame:SetHeight(20)
+    frame:SetHeight(28)
     frame.Update = Update
 
     frame.offline = CreateFrame("CheckButton", frameName.."_Offline", frame, "ChatConfigBaseCheckButtonTemplate")
     frame.offline:SetHeight(24)
     frame.offline:SetWidth(24)
     frame.offline:SetHitRectInsets(0, -50, 0, 0)
-    frame.offline:SetPoint("TOPLEFT", frame, "TOPLEFT", 2, 1)
+    frame.offline:SetPoint("TOPLEFT", frame, "TOPLEFT", 2, -2)
     frame.offline:SetScript("OnClick", FilterOffline)
     frame.offline.text = frame.offline:CreateFontString(frameName.."_OfflineText", "ARTWORK", "GameFontNormalSmall")
     frame.offline.text:SetPoint("LEFT", frame.offline, "RIGHT", 0, 0)
     frame.offline.text:SetJustifyH("LEFT")
     frame.offline.text:SetText("Offline")
 
-    frame.member = CreateFrame("CheckButton", frameName.."_Member", frame, "ChatConfigBaseCheckButtonTemplate")
-    frame.member:SetHeight(24)
-    frame.member:SetWidth(24)
-    frame.member:SetHitRectInsets(0, -50, 0, 0)
-    frame.member:SetPoint("LEFT", frame.offline, "RIGHT", 50, 0)
-    frame.member:SetScript("OnClick", FilterMember)
-    frame.member.text = frame.member:CreateFontString(frameName.."_MemberText", "ARTWORK", "GameFontNormalSmall")
-    frame.member.text:SetPoint("LEFT", frame.member, "RIGHT", 0, 0)
-    frame.member.text:SetJustifyH("LEFT")
-    frame.member.text:SetText("Member")
-
-    frame.initiate = CreateFrame("CheckButton", frameName.."_Initiate", frame, "ChatConfigBaseCheckButtonTemplate")
-    frame.initiate:SetHeight(24)
-    frame.initiate:SetWidth(24)
-    frame.initiate:SetHitRectInsets(0, -40, 0, 0)
-    frame.initiate:SetPoint("LEFT", frame.member, "RIGHT", 50, 0)
-    frame.initiate:SetScript("OnClick", FilterInitiate)
-    frame.initiate.text = frame.initiate:CreateFontString(frameName.."_InitiateText", "ARTWORK", "GameFontNormalSmall")
-    frame.initiate.text:SetPoint("LEFT", frame.initiate, "RIGHT", 0, 0)
-    frame.initiate.text:SetJustifyH("LEFT")
-    frame.initiate.text:SetText("Initiate")
-
-    frame.social = CreateFrame("CheckButton", frameName.."_Social", frame, "ChatConfigBaseCheckButtonTemplate")
-    frame.social:SetHeight(24)
-    frame.social:SetWidth(24)
-    frame.social:SetHitRectInsets(0, -35, 0, 0)
-    frame.social:SetPoint("LEFT", frame.initiate, "RIGHT", 42, 0)
-    frame.social:SetScript("OnClick", FilterSocial)
-    frame.social.text = frame.social:CreateFontString(frameName.."_SocialText", "ARTWORK", "GameFontNormalSmall")
-    frame.social.text:SetPoint("LEFT", frame.social, "RIGHT", 0, 0)
-    frame.social.text:SetJustifyH("LEFT")
-    frame.social.text:SetText("Social")
-
-    frame.alt = CreateFrame("CheckButton", frameName.."_Alt", frame, "ChatConfigBaseCheckButtonTemplate")
-    frame.alt:SetHeight(24)
-    frame.alt:SetWidth(24)
-    frame.alt:SetHitRectInsets(0, -20, 0, 0)
-    frame.alt:SetPoint("LEFT", frame.social, "RIGHT", 40, 0)
-    frame.alt:SetScript("OnClick", FilterAlt)
-    frame.alt.text = frame.alt:CreateFontString(frameName.."_AltText", "ARTWORK", "GameFontNormalSmall")
-    frame.alt.text:SetPoint("LEFT", frame.alt, "RIGHT", 0, 0)
-    frame.alt.text:SetJustifyH("LEFT")
-    frame.alt.text:SetText("Alt")
+    frame.roleFilter = CreateFrame("Frame", frameName.."_RoleFilter", nil, "UIDropDownMenuTemplate")
+    frame.roleFilter:SetParent(frame)
+    frame.roleFilter:SetPoint("TOPLEFT", frame.offline, "TOPRIGHT", 30, 2)
+    UIDropDownMenu_SetWidth(frame.roleFilter, 100)
+    UIDropDownMenu_SetText(frame.roleFilter, RoleFilterTitle())
+    UIDropDownMenu_Initialize(frame.roleFilter, RoleFilterDropDownMenu)
 
     frame.raid = CreateFrame("CheckButton", frameName.."_Raid", frame, "ChatConfigBaseCheckButtonTemplate")
     frame.raid:SetHeight(24)
     frame.raid:SetWidth(24)
     frame.raid:SetHitRectInsets(0, -60, 0, 0)
-    frame.raid:SetPoint("LEFT", frame.alt, "RIGHT", 25, 0)
+    frame.raid:SetPoint("LEFT", frame.roleFilter, "RIGHT", 0, 2)
     frame.raid:SetScript("OnClick", FilterNotInRaid)
     frame.raid.text = frame.raid:CreateFontString(frameName.."_RaidText", "ARTWORK", "GameFontNormalSmall")
     frame.raid.text:SetPoint("LEFT", frame.raid, "RIGHT", 0, 0)
@@ -153,6 +153,17 @@ function GuildFrame.UI.CreateGuildMenu()
     frame.mains.text:SetText("Show as main")
     -- frame.mains.text:SetText("|cff777777Show as main|r")
     -- frame.mains:SetEnabled(false)
+
+    frame.inactive = CreateFrame("CheckButton", frameName.."_Inactive", frame, "ChatConfigBaseCheckButtonTemplate")
+    frame.inactive:SetHeight(24)
+    frame.inactive:SetWidth(24)
+    frame.inactive:SetHitRectInsets(0, -75, 0, 0)
+    frame.inactive:SetPoint("LEFT", frame.mains, "RIGHT", 75, 0)
+    frame.inactive:SetScript("OnClick", FilterInactive)
+    frame.inactive.text = frame.inactive:CreateFontString(frameName.."_InactiveText", "ARTWORK", "GameFontNormalSmall")
+    frame.inactive.text:SetPoint("LEFT", frame.inactive, "RIGHT", 0, 0)
+    frame.inactive.text:SetJustifyH("LEFT")
+    frame.inactive.text:SetText("Inactive")
 
     return frame
 end

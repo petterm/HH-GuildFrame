@@ -22,6 +22,14 @@ local function guildPlayerSort(dataA, dataB)
 end
 
 
+local function playerInactive(guildIndex)
+    local dbUI = GuildFrame:GetUIDB()
+    local yearsOffline, monthsOffline, daysOffline = GetGuildRosterLastOnline(guildIndex);
+    local caDaysOffline = ((yearsOffline*12)+monthsOffline)*30.5+daysOffline
+    return caDaysOffline >= dbUI.inactiveDaysLimit
+end
+
+
 local visibleRows = {}
 local function Update(self, guildPlayers, guildData, raidData)
     local exisitingRows = #self.rows
@@ -31,6 +39,7 @@ local function Update(self, guildPlayers, guildData, raidData)
     for _, name in ipairs(guildPlayers) do
         local data = guildData[name]
         local offlineCheck = dbUI.showOffline or data.online
+        local inactiveCheck = data.online or dbUI.showInactive or not playerInactive(data.guildIndex)
         local altCheck = dbUI.showAlts or not GuildFrame:IsAltRank(data.rank)
 
         -- Check rank of main if this is an alt character
@@ -41,7 +50,8 @@ local function Update(self, guildPlayers, guildData, raidData)
         local raidCheck = not (IsInRaid() and dbUI.hideNotInRaid and
             (raidData[data.name] or raidData[mainData.name]))
 
-        if memberCheck and altCheck and initiateCheck and socialCheck and offlineCheck and raidCheck then
+        if memberCheck and altCheck and initiateCheck and socialCheck
+            and offlineCheck and raidCheck and inactiveCheck then
             tinsert(visibleRows, data)
         end
     end

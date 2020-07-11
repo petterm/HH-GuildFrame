@@ -49,6 +49,7 @@ new_read_globals = {
     "GuildInfoFrame",
     "GetGuildRosterSelection",
     "FriendsFrame",
+    "GetGuildRosterLastOnline",
 
     "CombatLogGetCurrentEventInfo",
     "CreateFrame",

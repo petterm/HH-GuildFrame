@@ -33,6 +33,7 @@ Showing the main characters for players that are online, even if they are curren
 ---
 
 ### TODO
+- Special case for when only alt filter is selected?
 - Checkboxes in list for prepared invites with button
 - LDB integration
   - Hover guild overview (online)
