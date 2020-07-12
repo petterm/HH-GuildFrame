@@ -43,7 +43,7 @@ local function RoleFilterTitle()
     if dbUI.showInitiates then
         count = count + 1
     end
-    if dbUI.showSocials then
+    if dbUI.showSocial then
         count = count + 1
     end
     if dbUI.showAlts then
@@ -93,7 +93,7 @@ local function RoleFilterDropDownMenu()
     UIDropDownMenu_AddButton(info)
 
     info.text = "Social"
-    info.arg1 = "showSocials"
+    info.arg1 = "showSocial"
     info.checked = dbUI[info.arg1]
     UIDropDownMenu_AddButton(info)
 
