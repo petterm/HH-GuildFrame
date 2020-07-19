@@ -25,12 +25,12 @@ local blueGreenLight4 = "267c6b"
 local blueGreenLight5 = "358448"
 local blueGreenLight6 = "428d2f"
 
-local blueGreenDark1 = "002c7f"
-local blueGreenDark2 = "00295a"
-local blueGreenDark3 = "004040"
-local blueGreenDark4 = "024f21"
-local blueGreenDark5 = "085b0e"
-local blueGreenDark6 = "094800"
+local blueGreenDark1 = "003599"
+local blueGreenDark2 = "003575"
+local blueGreenDark3 = "015e5e"
+local blueGreenDark4 = "03692c"
+local blueGreenDark5 = "0b6e12"
+local blueGreenDark6 = "0c6100"
 
 GuildFrame.zoneColor = {
     ["Tirisfal Glades"] = redYellowLight1,
@@ -48,6 +48,7 @@ GuildFrame.zoneColor = {
     ["Dun Morogh"] = redYellowDark3,
 
     ["Searing Gorge"] = redYellowLight4,
+    ["Blackrock Mountain"] = redYellowDark4,
     ["Burning Steppes"] = redYellowDark4,
     ["Badlands"] = redYellowDark4,
 
@@ -98,10 +99,9 @@ GuildFrame.zoneColor = {
     ["Uldaman"] = purpleLight,
     ["Zul'Farrak"] = purpleLight,
     ["Maraudon"] = purpleLight,
-    ["Temple of Atal'Hakkar"] = purpleLight,
+    ["The Temple of Atal'Hakkar"] = purpleLight,
     ["Blackrock Depths"] = purpleLight,
-    ["Lower Blackrock Spire"] = purpleLight,
-    ["Upper Blackrock Spire"] = purpleLight,
+    ["Blackrock Spire"] = purpleLight,
     ["Dire Maul"] = purpleLight,
     ["Stratholme"] = purpleLight,
     ["Scholomance"] = purpleLight,
