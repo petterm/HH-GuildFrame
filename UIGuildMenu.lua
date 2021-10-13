@@ -1,5 +1,5 @@
 local _, GuildFrame = ...
-
+local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 
 local function FilterOffline()
     local dbUI = GuildFrame:GetUIDB()
@@ -70,13 +70,13 @@ end
 local function RoleFilterDropDownSelect(_, arg1)
     local dbUI = GuildFrame:GetUIDB()
     dbUI[arg1] = not dbUI[arg1]
-    UIDropDownMenu_SetText(GuildFrame.UI.frame.guildMenu.roleFilter, RoleFilterTitle())
+    LibDD:UIDropDownMenu_SetText(GuildFrame.UI.frame.guildMenu.roleFilter, RoleFilterTitle())
     GuildFrame:UpdateUI()
 end
 
 
 local function RoleFilterDropDownMenu()
-    local info = UIDropDownMenu_CreateInfo()
+    local info = LibDD:UIDropDownMenu_CreateInfo()
     local dbUI = GuildFrame:GetUIDB()
     info.func = RoleFilterDropDownSelect
     info.keepShownOnClick = true
@@ -85,22 +85,22 @@ local function RoleFilterDropDownMenu()
     info.text = "Member"
     info.arg1 = "showMembers"
     info.checked = dbUI[info.arg1]
-    UIDropDownMenu_AddButton(info)
+    LibDD:UIDropDownMenu_AddButton(info)
 
     info.text = "Initiate"
     info.arg1 = "showInitiates"
     info.checked = dbUI[info.arg1]
-    UIDropDownMenu_AddButton(info)
+    LibDD:UIDropDownMenu_AddButton(info)
 
     info.text = "Social"
     info.arg1 = "showSocial"
     info.checked = dbUI[info.arg1]
-    UIDropDownMenu_AddButton(info)
+    LibDD:UIDropDownMenu_AddButton(info)
 
     info.text = "Alt"
     info.arg1 = "showAlts"
     info.checked = dbUI[info.arg1]
-    UIDropDownMenu_AddButton(info)
+    LibDD:UIDropDownMenu_AddButton(info)
 end
 
 
@@ -123,12 +123,12 @@ function GuildFrame.UI.CreateGuildMenu()
     frame.offline.text:SetJustifyH("LEFT")
     frame.offline.text:SetText("Offline")
 
-    frame.roleFilter = CreateFrame("Frame", frameName.."_RoleFilter", nil, "UIDropDownMenuTemplate")
+    frame.roleFilter = LibDD:Create_UIDropDownMenu(frameName.."_RoleFilter", frame)
     frame.roleFilter:SetParent(frame)
     frame.roleFilter:SetPoint("TOPLEFT", frame.offline, "TOPRIGHT", 30, 2)
-    UIDropDownMenu_SetWidth(frame.roleFilter, 100)
-    UIDropDownMenu_SetText(frame.roleFilter, RoleFilterTitle())
-    UIDropDownMenu_Initialize(frame.roleFilter, RoleFilterDropDownMenu)
+    LibDD:UIDropDownMenu_SetWidth(frame.roleFilter, 100)
+    LibDD:UIDropDownMenu_SetText(frame.roleFilter, RoleFilterTitle())
+    LibDD:UIDropDownMenu_Initialize(frame.roleFilter, RoleFilterDropDownMenu)
 
     frame.raid = CreateFrame("CheckButton", frameName.."_Raid", frame, "ChatConfigBaseCheckButtonTemplate")
     frame.raid:SetHeight(24)
@@ -151,8 +151,6 @@ function GuildFrame.UI.CreateGuildMenu()
     frame.mains.text:SetPoint("LEFT", frame.mains, "RIGHT", 0, 0)
     frame.mains.text:SetJustifyH("LEFT")
     frame.mains.text:SetText("Show as main")
-    -- frame.mains.text:SetText("|cff777777Show as main|r")
-    -- frame.mains:SetEnabled(false)
 
     frame.inactive = CreateFrame("CheckButton", frameName.."_Inactive", frame, "ChatConfigBaseCheckButtonTemplate")
     frame.inactive:SetHeight(24)

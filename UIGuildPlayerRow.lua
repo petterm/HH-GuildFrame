@@ -8,130 +8,16 @@ local classColorDark = {
     PALADIN = "ff804960",
     PRIEST = "ff808080",
     ROGUE = "ff807a34",
+    SHAMAN = "ff003870",
     WARLOCK = "ff434375",
     WARRIOR = "ff634e37",
 }
 
--- Modified version of blizzard code
--- https://github.com/tomrus88/BlizzardInterfaceCode/blob/classic/Interface/FrameXML/FriendsFrame.lua#L2677
-local function BlizzGuildStatus_Update()
-    local fullName, rank, rankIndex, level, class, zone, note, officernote, online;
-    local _, _, guildRankIndex = GetGuildInfo("player");
-    local maxRankIndex = GuildControlGetNumRanks() - 1;
-
-    -- Get selected guild member info
-    fullName, rank, rankIndex, level, class, zone,
-        note, officernote, online = GetGuildRosterInfo(GetGuildRosterSelection());
-    BlizzGuildFrame.selectedName = fullName;
-    -- If there's a selected guildmember
-    if ( GetGuildRosterSelection() > 0 ) then
-        local displayedName = Ambiguate(fullName, "guild");
-        -- Update the guild member details frame
-        GuildMemberDetailName:SetText(displayedName);
-        GuildMemberDetailLevel:SetText(format(FRIENDS_LEVEL_TEMPLATE, level, class));
-        GuildMemberDetailZoneText:SetText(zone);
-        GuildMemberDetailRankText:SetText(rank);
-        if ( online ) then
-            GuildMemberDetailOnlineText:SetText(GUILD_ONLINE_LABEL);
-        else
-            GuildMemberDetailOnlineText:SetText(GuildFrame_GetLastOnline(GetGuildRosterSelection()));
-        end
-        -- Update public note
-        if ( CanEditPublicNote() ) then
-            PersonalNoteText:SetTextColor(1.0, 1.0, 1.0);
-            if ( (not note) or (note == "") ) then
-                note = GUILD_NOTE_EDITLABEL;
-            end
-        else
-            PersonalNoteText:SetTextColor(0.65, 0.65, 0.65);
-        end
-        GuildMemberNoteBackground:EnableMouse(CanEditPublicNote());
-        PersonalNoteText:SetText(note);
-        -- Update officer note
-        if ( CanViewOfficerNote() ) then
-            if ( CanEditOfficerNote() ) then
-                if ( (not officernote) or (officernote == "") ) then
-                    officernote = GUILD_OFFICERNOTE_EDITLABEL;
-                end
-                OfficerNoteText:SetTextColor(1.0, 1.0, 1.0);
-            else
-                OfficerNoteText:SetTextColor(0.65, 0.65, 0.65);
-            end
-            GuildMemberOfficerNoteBackground:EnableMouse(CanEditOfficerNote());
-            OfficerNoteText:SetText(officernote);
-
-            -- Resize detail frame
-            GuildMemberDetailOfficerNoteLabel:Show();
-            GuildMemberOfficerNoteBackground:Show();
-            GuildMemberDetailFrame:SetHeight(GUILD_DETAIL_OFFICER_HEIGHT);
-        else
-            GuildMemberDetailOfficerNoteLabel:Hide();
-            GuildMemberOfficerNoteBackground:Hide();
-            GuildMemberDetailFrame:SetHeight(GUILD_DETAIL_NORM_HEIGHT);
-        end
-
-        -- Manage guild member related buttons
-        if ( CanGuildPromote() and ( rankIndex > 1 ) and ( rankIndex > (guildRankIndex + 1) ) ) then
-            GuildFramePromoteButton:Enable();
-        else
-            GuildFramePromoteButton:Disable();
-        end
-        if ( CanGuildDemote() and ( rankIndex >= 1 ) and ( rankIndex > guildRankIndex ) and
-            ( rankIndex ~= maxRankIndex ) ) then
-            GuildFrameDemoteButton:Enable();
-        else
-            GuildFrameDemoteButton:Disable();
-        end
-        -- Hide promote/demote buttons if both disabled
-        if ( not GuildFrameDemoteButton:IsEnabled() and not GuildFramePromoteButton:IsEnabled() ) then
-            GuildFramePromoteButton:Hide();
-            GuildFrameDemoteButton:Hide();
-            GuildMemberDetailRankText:SetPoint("RIGHT", "GuildMemberDetailFrame", "RIGHT", -10, 0);
-        else
-            GuildFramePromoteButton:Show();
-            GuildFrameDemoteButton:Show();
-            GuildMemberDetailRankText:SetPoint("RIGHT", "GuildFramePromoteButton", "LEFT", 3, 0);
-        end
-        if ( CanGuildRemove() and ( rankIndex >= 1 ) and ( rankIndex > guildRankIndex ) ) then
-            GuildMemberRemoveButton:Enable();
-        else
-            GuildMemberRemoveButton:Disable();
-        end
-        if ( (UnitName("player") == displayedName) or (not online) ) then
-            GuildMemberGroupInviteButton:Disable();
-        else
-            GuildMemberGroupInviteButton:Enable();
-        end
-
-        BlizzGuildFrame.selectedName = GetGuildRosterInfo(GetGuildRosterSelection());
-    end
-end
-
--- Modified version of blizzard code
--- https://github.com/tomrus88/BlizzardInterfaceCode/blob/classic/Interface/FrameXML/FriendsFrame.lua#L2653
-local function BlizzGuildOnClick(guildIndex, name)
-    BlizzGuildFrame.previousSelectedGuildMember = BlizzGuildFrame.selectedGuildMember;
-    BlizzGuildFrame.selectedGuildMember = guildIndex;
-    BlizzGuildFrame.selectedName = name
-    SetGuildRosterSelection(BlizzGuildFrame.selectedGuildMember);
-    -- Toggle guild details frame
-    if ( GuildMemberDetailFrame:IsVisible() and BlizzGuildFrame.previousSelectedGuildMember and
-        BlizzGuildFrame.previousSelectedGuildMember == BlizzGuildFrame.selectedGuildMember ) then
-        GuildMemberDetailFrame:Hide();
-        GuildFrame.UI:ReturnGuildMemberDetailFrame()
-        BlizzGuildFrame.selectedGuildMember = 0;
-        SetGuildRosterSelection(0);
-    else
-        GuildFrame.UI:StealGuildMemberDetailFrame()
-        GuildMemberDetailFrame:Show();
-    end
-    BlizzGuildStatus_Update()
-end
 
 
 local function OnClick(self, button)
     if button == "LeftButton" then
-        BlizzGuildOnClick(self.guildIndex, self.nameRaw)
+        -- TODO: Show member info
     elseif button == "RightButton" then
         FriendsFrame_ShowDropdown(self.name, true)
     end

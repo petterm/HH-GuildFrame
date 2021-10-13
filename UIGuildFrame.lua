@@ -124,7 +124,7 @@ function GuildFrame.UI.CreateGuildFrame()
     local frameName = "HHGuildFrame_UI-GuildFrame"
 
     local scrollFrameName = frameName.."-ScrollFrame"
-    local scrollFrame = CreateFrame("ScrollFrame", scrollFrameName, nil, "UIPanelScrollFrameTemplate")
+    local scrollFrame = CreateFrame("ScrollFrame", scrollFrameName, nil, "UIPanelScrollFrameTemplate, BackdropTemplate")
     scrollFrame:SetBackdrop({ bgFile = "Interface/Tooltips/UI-Tooltip-Background" })
     scrollFrame:SetBackdropColor(0,0,0,1)
     scrollFrame:ClearAllPoints()

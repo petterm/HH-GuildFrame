@@ -56,7 +56,7 @@ end
 function GuildFrame.UI.CreateGuildInfo()
     local frameName = "HHGuildFrame_UI-GuildFrame-Info"
 
-    local frame = CreateFrame("Frame", frameName)
+    local frame = CreateFrame("Frame", frameName, nil, _G.BackdropTemplateMixin and "BackdropTemplate" or nil)
     frame:SetHeight(20)
     frame:SetBackdrop({ bgFile = "Interface/Tooltips/UI-Tooltip-Background" })
     frame:SetBackdropColor(0.2,0.3,0.2,1)

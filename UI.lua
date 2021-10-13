@@ -39,8 +39,7 @@ function GuildFrame.UI:Create()
 
     local frameName = "HHGuildFrame_UI"
 
-    local frame = CreateFrame("Frame", frameName)
-    frame:SetParent(UIParent)
+    local frame = CreateFrame("Frame", frameName, UIParent, _G.BackdropTemplateMixin and "BackdropTemplate" or nil)
     frame:SetPoint("CENTER")
     frame:SetHeight(574)
     frame:SetWidth(540)
@@ -60,7 +59,7 @@ function GuildFrame.UI:Create()
     frame.CloseButton = CreateFrame("Button", frameName.."-CloseButton", frame, "UIPanelCloseButton")
     frame.CloseButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 0, 0)
 
-    frame.titleFrame = CreateFrame("Frame")
+    frame.titleFrame = CreateFrame("Frame", nil, frame, _G.BackdropTemplateMixin and "BackdropTemplate" or nil)
     frame.titleFrame:ClearAllPoints()
     frame.titleFrame:SetParent(frame)
     frame.titleFrame:SetPoint("TOPLEFT", frame, 10, -7)

@@ -4,6 +4,9 @@ local purpleDark = "842196"
 local purpleLight = "9482ca"
 local pink = "e1649b"
 
+local easternKingdoms = ""
+local kalimdor = ""
+
 local redYellowLight1 = "ab221c"
 local redYellowLight2 = "ae491f"
 local redYellowLight3 = "b16121"
@@ -36,6 +39,8 @@ GuildFrame.zoneColor = {
     ["Tirisfal Glades"] = redYellowLight1,
     ["Western Plaguelands"] = redYellowLight1,
     ["Eastern Plaguelands"] = redYellowDark1,
+    ["Ghostlands"] = redYellowDark1,
+    ["Eversong Woods"] = redYellowDark1,
 
     ["Silverpine Forest"] = redYellowLight2,
     ["Alterac Mountains"] = redYellowLight2,
@@ -63,6 +68,8 @@ GuildFrame.zoneColor = {
     ["Blasted Lands"] = redYellowDark6,
 
     ["Teldrassil"] = blueGreenLight1,
+    ["Azuremyst Isle"] = blueGreenLight1,
+    ["Bloodmyst Isle"] = blueGreenLight1,
     ["Darkshore"] = blueGreenLight1,
     ["Moonglade"] =blueGreenDark1,
     ["Winterspring"] = blueGreenDark1,
@@ -110,11 +117,55 @@ GuildFrame.zoneColor = {
     ["Molten Core"] = purpleDark,
     ["Blackwing Lair"] = purpleDark,
     ["Ruins of Ahn'Qiraj"] = purpleDark,
-    ["Temple of Ahn'Qiraj"] = purpleDark,
+    ["Ahn'Qiraj"] = purpleDark,
     ["Naxxramas"] = purpleDark,
+
+    -- TBC Zones
+    ["Hellfire Peninsula"] = "eb8559",
+    ["Zangarmarsh"] = "29bab5",
+    ["Terokkar Forest"] = "2bad41",
+    ["Nagrand"] = "95ad2b",
+    ["Blade's Edge Mountains"] = "ad842b",
+    ["Netherstorm"] = "943ab0",
+    ["Shadowmoon Valley"] = "00c932",
+
+    -- TBC Instances
+    ["Hellfire Ramparts"] = purpleLight,
+    ["The Blood Furnace"] = purpleLight,
+    ["The Shattered Halls"] = purpleLight,
+    ["The Slave Pens"] = purpleLight,
+    ["The Underbog"] = purpleLight,
+    ["The Steamvault"] = purpleLight,
+    ["Mana-Tombs"] = purpleLight,
+    ["Auchenai Crypts"] = purpleLight,
+    ["Sethekk Halls"] = purpleLight,
+    ["Shadow Labyrinth"] = purpleLight,
+    ["Old Hillsbrad Foothills"] = purpleLight,
+    ["The Black Morass"] = purpleLight,
+    ["The Botanica"] = purpleLight,
+    ["The Mechanar"] = purpleLight,
+    ["The Arcatraz"] = purpleLight,
+
+    ["Karazhan"] = purpleDark,
+    ["Magtheridon's Lair"] = purpleDark,
+    ["Gruul's Lair"] = purpleDark,
+    ["Serpentshrine Cavern"] = purpleDark,
+    ["Tempest Keep"] = purpleDark,
 
     -- Cities
     ["Stormwind City"] = pink,
     ["Ironforge"] = pink,
     ["Darnassus"] = pink,
+    ["The Exodar"] = pink,
+    ["Shattrath City"] = pink,
+    ["Orgrimmar"] = pink,
+    ["Thunderbluff"] = pink,
+    ["Undercity"] = pink,
+    ["Silvermoon"] = pink,
+
+    -- Cities
+    ["Alterac Valley"] = "d14747",
+    ["Warsong Gulch"] = "d14747",
+    ["Arathi Basin"] = "d14747",
+    ["Eye of the Storm"] = "d14747",
 }
